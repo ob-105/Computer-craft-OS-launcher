@@ -1,5 +1,5 @@
 -- init.lua
--- Installer for ComputerCraft Launcher
+-- Installer for modular ComputerCraft Launcher
 
 local githubBase = "https://raw.githubusercontent.com/ob-105/Computer-craft-OS-launcher/refs/heads/main/launcher/"
 local files = { "main.lua", "apps.lua", "ui.lua", "chat.lua", "gps.lua", "calculator.lua" }
