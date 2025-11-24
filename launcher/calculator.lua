@@ -20,4 +20,15 @@ return {
             local input = read()
             local fn, err = load("return " .. input)
             if fn then
-                local
+                local ok, result = pcall(fn)
+                if ok then
+                    print("= " .. tostring(result))
+                else
+                    print("Error: " .. tostring(result))
+                end
+            else
+                print("Invalid expression: " .. tostring(err))
+            end
+        end
+    end
+}
