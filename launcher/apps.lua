@@ -25,7 +25,7 @@ local apps = {
         description = "Connect to the global chat channel."
     },
     {
-        name = "GPS Viewer",
+        name = "GPS",
         image = {
             "############",
             "#          #",
