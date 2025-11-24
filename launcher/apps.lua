@@ -1,41 +1,15 @@
 -- apps.lua
-local apps = {
-    {
-        name = "Calculator",
-        image = {
-            "############",
-            "#          #",
-            "#   Calc   #",
-            "#          #",
-            "############",
-            "############"
-        },
-        description = "A simple calculator for math operations."
-    },
-    {
-        name = "Chat",
-        image = {
-            "############",
-            "#          #",
-            "#   Chat   #",
-            "#          #",
-            "############",
-            "############"
-        },
-        description = "Connect to the global chat channel."
-    },
-    {
-        name = "GPS",
-        image = {
-            "############",
-            "#          #",
-            "#   GPS    #",
-            "#          #",
-            "############",
-            "############"
-        },
-        description = "Shows your current GPS coordinates."
-    }
-}
+-- Dynamically loads all apps in the launcher folder
+
+local apps = {}
+
+for _, file in ipairs(fs.list("launcher")) do
+    if file:match("%.lua$") and file ~= "apps.lua" and file ~= "ui.lua" and file ~= "main.lua" then
+        local ok, app = pcall(require, "launcher/" .. file:gsub("%.lua$", ""))
+        if ok and type(app) == "table" and app.name then
+            table.insert(apps, app)
+        end
+    end
+end
 
 return apps
