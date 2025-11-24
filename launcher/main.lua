@@ -11,7 +11,7 @@ local gpsStatus = "GPS: Checking..."
 -- Background GPS updater
 local function updateGPS()
     while true do
-        local x, y, z = gps.locate(2) -- 2 second timeout
+        local x, y, z = gps.locate(.01) -- 2 second timeout
         if x then
             gpsStatus = "GPS: Connected (" .. math.floor(x) .. "," .. math.floor(y) .. "," .. math.floor(z) .. ")"
         else
