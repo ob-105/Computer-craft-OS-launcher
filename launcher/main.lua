@@ -79,14 +79,7 @@ while true do
                 scrollIndex = scrollIndex + 1
             end
         elseif key == keys.enter then
-            local appName = apps[selectedApp].name:lower()
-            local path = "launcher/" .. appName .. ".lua"
-            if fs.exists(path) then
-                shell.run(path)
-            else
-                print("App not found: " .. path)
-                sleep(1)
-            end
+            apps[selectedApp].run()
         end
 
     elseif event == "mouse_click" then
@@ -98,14 +91,7 @@ while true do
                 selectedApp = appIndex
             end
         elseif y >= 15 then
-            local appName = apps[selectedApp].name:lower()
-            local path = "launcher/" .. appName .. ".lua"
-            if fs.exists(path) then
-                shell.run(path)
-            else
-                print("App not found: " .. path)
-                sleep(1)
-            end
+            apps[selectedApp].run()
         end
     end
 end
