@@ -1,6 +1,4 @@
 -- ui.lua
-local term = term
-
 local ui = {}
 
 function ui.clear()
