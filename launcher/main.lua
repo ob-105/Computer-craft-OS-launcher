@@ -68,32 +68,44 @@ while true do
 
     if event == "key" then
         local key = p1
-        if key == keys.up and scrollIndex > 1 then
-            scrollIndex = scrollIndex - 1
-            selectedApp = math.max(scrollIndex, selectedApp - 1)
-        elseif key == keys.down and scrollIndex + 5 <= #apps then
-            scrollIndex = scrollIndex + 1
-            selectedApp = math.min(scrollIndex + 4, selectedApp + 1)
+        if key == keys.up and selectedApp > 1 then
+            selectedApp = selectedApp - 1
+            if selectedApp < scrollIndex then
+                scrollIndex = scrollIndex - 1
+            end
+        elseif key == keys.down and selectedApp < #apps then
+            selectedApp = selectedApp + 1
+            if selectedApp > scrollIndex + 4 then
+                scrollIndex = scrollIndex + 1
+            end
         elseif key == keys.enter then
-            shell.run("launcher/" .. apps[selectedApp].name:lower())
+            local appName = apps[selectedApp].name:lower()
+            local path = "launcher/" .. appName .. ".lua"
+            if fs.exists(path) then
+                shell.run(path)
+            else
+                print("App not found: " .. path)
+                sleep(1)
+            end
         end
 
     elseif event == "mouse_click" then
         local button, x, y = p1, p2, p3
 
-        if y == 3 and scrollIndex > 1 then
-            scrollIndex = scrollIndex - 1
-            selectedApp = math.max(scrollIndex, selectedApp - 1)
-        elseif y == 9 and scrollIndex + 5 <= #apps then
-            scrollIndex = scrollIndex + 1
-            selectedApp = math.min(scrollIndex + 4, selectedApp + 1)
-        elseif y >= 4 and y <= 8 then
+        if y >= 4 and y <= 8 then
             local appIndex = scrollIndex + (y - 4)
             if apps[appIndex] then
                 selectedApp = appIndex
             end
         elseif y >= 15 then
-            shell.run("launcher/" .. apps[selectedApp].name:lower())
+            local appName = apps[selectedApp].name:lower()
+            local path = "launcher/" .. appName .. ".lua"
+            if fs.exists(path) then
+                shell.run(path)
+            else
+                print("App not found: " .. path)
+                sleep(1)
+            end
         end
     end
 end
