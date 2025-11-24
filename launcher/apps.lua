@@ -14,12 +14,26 @@ local apps = {
     },
     {
         name = "Chat",
-        image = nil,
-        description = "Connect and chat with other players."
+        image = {
+            "############",
+            "#          #",
+            "#   Chat   #",
+            "#          #",
+            "############",
+            "############"
+        },
+        description = "Connect to the global chat channel."
     },
     {
         name = "GPS Viewer",
-        image = nil,
+        image = {
+            "############",
+            "#          #",
+            "#   GPS    #",
+            "#          #",
+            "############",
+            "############"
+        },
         description = "Shows your current GPS coordinates."
     }
 }
