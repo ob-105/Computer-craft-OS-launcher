@@ -5,13 +5,19 @@ local ui = require("launcher/ui")
 local scrollIndex = 1
 local selectedApp = 1
 
--- GPS status
-local function getGPSStatus()
-    local x, y, z = gps.locate(2)
-    if x then
-        return "GPS: Connected (" .. math.floor(x) .. "," .. math.floor(y) .. "," .. math.floor(z) .. ")"
-    else
-        return "GPS: No Signal"
+-- Cached GPS status
+local gpsStatus = "GPS: Checking..."
+
+-- Background GPS updater
+local function updateGPS()
+    while true do
+        local x, y, z = gps.locate(2) -- 2 second timeout
+        if x then
+            gpsStatus = "GPS: Connected (" .. math.floor(x) .. "," .. math.floor(y) .. "," .. math.floor(z) .. ")"
+        else
+            gpsStatus = "GPS: No Signal"
+        end
+        sleep(5) -- refresh every 5 seconds
     end
 end
 
@@ -27,7 +33,7 @@ end
 
 -- Draw system info
 local function drawSystemInfo()
-    ui.drawText(1, 1, getGPSStatus(), colors.green)
+    ui.drawText(1, 1, gpsStatus, colors.green)
     ui.drawText(1, 2, getChatStatus(), colors.green)
 end
 
@@ -61,37 +67,42 @@ local function render()
     drawAppDetails()
 end
 
--- Main loop
-while true do
-    render()
-    local event, p1, p2, p3 = os.pullEvent()
+-- UI loop
+local function uiLoop()
+    while true do
+        render()
+        local event, p1, p2, p3 = os.pullEvent()
 
-    if event == "key" then
-        local key = p1
-        if key == keys.up and selectedApp > 1 then
-            selectedApp = selectedApp - 1
-            if selectedApp < scrollIndex then
-                scrollIndex = scrollIndex - 1
+        if event == "key" then
+            local key = p1
+            if key == keys.up and selectedApp > 1 then
+                selectedApp = selectedApp - 1
+                if selectedApp < scrollIndex then
+                    scrollIndex = scrollIndex - 1
+                end
+            elseif key == keys.down and selectedApp < #apps then
+                selectedApp = selectedApp + 1
+                if selectedApp > scrollIndex + 4 then
+                    scrollIndex = scrollIndex + 1
+                end
+            elseif key == keys.enter then
+                apps[selectedApp].run()
             end
-        elseif key == keys.down and selectedApp < #apps then
-            selectedApp = selectedApp + 1
-            if selectedApp > scrollIndex + 4 then
-                scrollIndex = scrollIndex + 1
-            end
-        elseif key == keys.enter then
-            apps[selectedApp].run()
-        end
 
-    elseif event == "mouse_click" then
-        local button, x, y = p1, p2, p3
+        elseif event == "mouse_click" then
+            local button, x, y = p1, p2, p3
 
-        if y >= 4 and y <= 8 then
-            local appIndex = scrollIndex + (y - 4)
-            if apps[appIndex] then
-                selectedApp = appIndex
+            if y >= 4 and y <= 8 then
+                local appIndex = scrollIndex + (y - 4)
+                if apps[appIndex] then
+                    selectedApp = appIndex
+                end
+            elseif y >= 15 then
+                apps[selectedApp].run()
             end
-        elseif y >= 15 then
-            apps[selectedApp].run()
         end
     end
 end
+
+-- Run UI and GPS updater in parallel
+parallel.waitForAny(uiLoop, updateGPS)
